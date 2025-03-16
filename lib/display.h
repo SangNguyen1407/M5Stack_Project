@@ -4,9 +4,9 @@
 #include <M5Core2.h>
 
 typedef enum {
-    DIS_SCAN,
-    DIS_CONNECT,
-    DIS_MAIN,
+    DISPLAY_SCAN,
+    DISPLAY_CONNECT,
+    DISPLAY_MAIN,
 } DISPLAY_MODE;
 
 typedef enum {
@@ -17,13 +17,15 @@ typedef enum {
 } OPTS;
 
 extern DISPLAY_MODE displayMode;
+extern OPTS opt;
+
 extern int BUTTON_WIDTH;
 extern int BUTTON_HEIGHT;
 extern const char *optDisplay[]; 
 
 void DisplayInit();
-// void DisplayScan();
 void DisplayInfo(int info);
-void ShowDisplay();
+void ShowDisplay(DISPLAY_MODE mode);
+void ShowOptChoose();
 
 #endif //DISPLAY_H

@@ -3,7 +3,7 @@
 
 File openFile(){
   bool success = SPIFFS.begin(true);
-  File file = SPIFFS.open( "/test.txt", FILE_READ);
+  File file = SPIFFS.open(CONF_FILENAME, FILE_READ);
   return file;
 }
 
@@ -13,10 +13,17 @@ File closeFile(File file){
   }
 }
 
+void deleteFile(){
+  bool success = SPIFFS.begin(true);
+  if (success){
+    SPIFFS.remove(CONF_FILENAME);
+  }
+}
+
 String readFile(){
   String sData = "";
   bool success = SPIFFS.begin(true);
-  File file = SPIFFS.open( "/test.txt", FILE_READ);
+  File file = SPIFFS.open(CONF_FILENAME, FILE_READ);
 
   if (success && file){
     if (file.available()){
@@ -35,7 +42,7 @@ String readFile(){
 
 bool writeFile(const char *content){
   bool success = SPIFFS.begin(true);
-  File file = SPIFFS.open( "/test.txt", FILE_WRITE);
+  File file = SPIFFS.open(CONF_FILENAME, FILE_WRITE);
 
   if (success && file){
     if (file.available()){

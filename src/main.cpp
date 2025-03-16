@@ -17,37 +17,38 @@ void setup() {
   delay(1000);
   M5.Lcd.setTextSize(2);
   File file = openFile();
-  
+  opt = OPT_1;
   if (file){
     char str[128];
     String sData = readFile();
 
     if (sData != ""){
-      int start = 0;
-      int end = sData.indexOf(',', start);
+      // int start = 0;
+      // int end = sData.indexOf(',', start);
 
-      start = end + 1;
-      end = sData.indexOf(',', start);
-      sprintf(str, "test: %s", sData.substring(start, end)); //2
+      // start = end + 1;
+      // end = sData.indexOf(',', start);
+      // sprintf(str, "test: %s", sData.substring(start, end)); //2
       displayMode = DISPLAY_MAIN;
       ShowDisplay(DISPLAY_MAIN);
-      M5.Lcd.drawString(str, 10, 60, 2);
+      // M5.Lcd.drawString(str, 10, 60, 2);
     }
     else{
       displayMode = DISPLAY_SCAN;
       ShowDisplay(DISPLAY_SCAN);
+      
     }
   }
   else{
     M5.Lcd.drawString("SPIFFS NOT WORKING...", 10, 0, 2);
   }
   
-  M5.Lcd.setTextColor(BLUE);
-  M5.Lcd.drawCentreString("WRITE", 30, 260, 2);
-  M5.Lcd.setTextColor(YELLOW);
-  M5.Lcd.drawCentreString("NEXT", 170, 260, 2);
-  M5.Lcd.setTextColor(GREEN);
-  M5.Lcd.drawCentreString("READ", 260, 260, 2);
+  // M5.Lcd.setTextColor(BLUE);
+  // M5.Lcd.drawCentreString("NEXT", 30, 260, 2);
+  // M5.Lcd.setTextColor(YELLOW);
+  // M5.Lcd.drawCentreString("READ", 170, 260, 2);
+  // M5.Lcd.setTextColor(GREEN);
+  // M5.Lcd.drawCentreString("WRITE", 260, 260, 2);
 
   M5.BtnA.addHandler(BtnAEvent, E_TOUCH);
   M5.BtnB.addHandler(BtnBEvent, E_TOUCH);
