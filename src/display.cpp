@@ -12,7 +12,7 @@ const char *CONNECT_OPT[] = {"CONNECT_1", "CONNECT_2", "CONNECT_3"};
 const char *MAIN_OPT[] = {"MAIN_1", "MAIN_2", "MAIN_3"};
 
 const char *optDisplay[OPT_MAX-1]; 
-DISPLAY_MODE displayMode = DIS_SCAN;
+DISPLAY_MODE displayMode = DISPLAY_SCAN;
 
 void DisplayInit(){
     // M5.Lcd.clear();
@@ -51,36 +51,33 @@ void DisplayInfo(int pos){
 
 }
 
-// void DisplayScan(){
-//     M5.Lcd.clear();
-//     M5.Lcd.setTextSize(2);
-//     M5.Lcd.setTextColor(WHITE);
-//     M5.Lcd.drawString("Scanning...", 50, 150);
-// }
-
-void ShowDisplay(){
-    switch (displayMode)
+void ShowDisplay(DISPLAY_MODE mode){
+    M5.Lcd.clear();
+    switch (mode)
     {
-    case DIS_SCAN:
-        break;
-    case DIS_CONNECT:
-        for(int opt=0; opt < OPT_MAX; opt++) {
-            optDisplay[opt] = CONNECT_OPT[opt];
-        }
-        // M5.Lcd.drawRect(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT, BLACK);
-        // M5.Lcd.drawRect(0, BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT, BLACK);
-        // M5.Lcd.drawRect(0, BUTTON_HEIGHT*2, BUTTON_WIDTH, BUTTON_HEIGHT, BLACK);
-        break;
-    case DIS_MAIN:
-        for(int opt=0; opt < OPT_MAX; opt++) {
-            optDisplay[opt] = MAIN_OPT[opt];
-        }
-        break;
-    default:
-        break;
+        case DISPLAY_SCAN:
+            M5.Lcd.drawString("SCANNING", 10, 0, 2);
+            break;
+        case DISPLAY_CONNECT:
+            M5.Lcd.drawString("CONNECT", 10, 0, 2);
+            // for(int opt=0; opt < OPT_MAX; opt++) {
+            //     optDisplay[opt] = CONNECT_OPT[opt];
+            // }
+            // M5.Lcd.drawRect(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT, BLACK);
+            // M5.Lcd.drawRect(0, BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT, BLACK);
+            // M5.Lcd.drawRect(0, BUTTON_HEIGHT*2, BUTTON_WIDTH, BUTTON_HEIGHT, BLACK);
+            break;
+        case DISPLAY_MAIN:
+            M5.Lcd.drawString("MAIN", 10, 0, 2);
+            // for(int opt=0; opt < OPT_MAX; opt++) {
+            //     optDisplay[opt] = MAIN_OPT[opt];
+            // }
+            break;
+        default:
+            break;
     }
 
-    M5.Lcd.drawCentreString(optDisplay[OPT_1], 20, 20, 2);
-    M5.Lcd.drawCentreString(optDisplay[OPT_2], 20, BUTTON_HEIGHT + 20, 2);
-    M5.Lcd.drawCentreString(optDisplay[OPT_3], 20, BUTTON_HEIGHT*2 + 20, 2);
+    // M5.Lcd.drawCentreString(optDisplay[OPT_1], 20, 20, 2);
+    // M5.Lcd.drawCentreString(optDisplay[OPT_2], 20, BUTTON_HEIGHT + 20, 2);
+    // M5.Lcd.drawCentreString(optDisplay[OPT_3], 20, BUTTON_HEIGHT*2 + 20, 2);
 }
