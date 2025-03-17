@@ -9,5 +9,6 @@ extern const char *CONF_FILENAME;
 File openFile();
 String readFile();
 bool writeFile(const char *content);
+void deleteFile();
 
 #endif //FILE_HANDLE_H

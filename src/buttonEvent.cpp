@@ -6,17 +6,27 @@
 /* Scan button
  */
 void BtnAEvent(Event& e){
-  // BLEStart();
-  // BLEScanPeripheralList();
-  DISPLAY_MODE mode = (displayMode == DISPLAY_SCAN)? DISPLAY_CONNECT : 
-  (displayMode == DISPLAY_CONNECT)? DISPLAY_MAIN : DISPLAY_SCAN;
   
-  displayMode = mode;
-  ShowDisplay(mode);
+  if (displayMode == DISPLAY_MAIN && opt == OPT_1){
+  }
+  else if (displayMode == DISPLAY_MAIN && opt == OPT_2){
+    handleOpt(displayMode);
+  }
+  else if (displayMode == DISPLAY_CONNECT && opt == OPT_1){
+    nextDevice();
+  }
+  else if (displayMode == DISPLAY_CONNECT && opt == OPT_2){
+    displayMode = DISPLAY_MAIN;
+    ShowDisplay(DISPLAY_MAIN);
+  }
 }
 
 void BtnBEvent(Event& e){
-  //readFile();
+  // DISPLAY_MODE mode = (displayMode == DISPLAY_SCAN)? DISPLAY_CONNECT : 
+  // (displayMode == DISPLAY_CONNECT)? DISPLAY_MAIN : DISPLAY_SCAN;
+  
+  // displayMode = mode;
+  // ShowDisplay(mode);
   ShowOptChoose();
 }
 

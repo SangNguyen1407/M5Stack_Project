@@ -2,8 +2,8 @@
 #include <M5Core2.h>
 
 
-std::vector<BLEAdvertisedDevice> pBLEAdvertiesdDeviceList;
-int device_count = 0;
+// std::vector<BLEAdvertisedDevice> pBLEAdvertiesdDeviceList;
+// int device_count = 0;
  
 void ClientCallback::onConnect(BLEClient *pclient){
   BLESecurity *pSecurity = new BLESecurity();

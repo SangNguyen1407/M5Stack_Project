@@ -7,6 +7,11 @@ File openFile(){
   return file;
 }
 
+bool isExsisted(){
+  bool success = SPIFFS.begin(true);
+  return SPIFFS.exists(CONF_FILENAME);
+}
+
 File closeFile(File file){
   if (file){
     file.close();
@@ -26,13 +31,8 @@ String readFile(){
   File file = SPIFFS.open(CONF_FILENAME, FILE_READ);
 
   if (success && file){
-    if (file.available()){
-      sData = file.readStringUntil('\n');
-      file.close();
-    } 
-    else{
-      M5.Lcd.drawString("file not available", 10, 90, 2);
-    }
+    sData = file.readStringUntil('\n');
+    file.close();
   }
   else{
     M5.Lcd.drawString("not open file", 10, 90, 2);
@@ -45,10 +45,8 @@ bool writeFile(const char *content){
   File file = SPIFFS.open(CONF_FILENAME, FILE_WRITE);
 
   if (success && file){
-    if (file.available()){
-      file.println(content);
-      file.close();
-    }
+    file.println(content);
+    file.close();
   }
 
   return true;

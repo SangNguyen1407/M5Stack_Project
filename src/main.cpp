@@ -8,47 +8,37 @@
 #include "../lib/network.h"
 #include "../lib/buttonEvent.h"
 #include "../lib/fileHandle.h"
+#include "esp_system.h"
 
 const char *CONF_FILENAME = "/test.txt";
+
+unsigned long touchStartTime = 0;
+bool isTouching = false;
+const int longPressThreshold = 2000;
+
+
+std::vector<BLEAdvertisedDevice> pBLEAdvertiesdDeviceList;
+int device_count = 0;
+int deviceCount = 0;
 
 void setup() {
   // LCD開始の表示
   M5.begin();
-  delay(1000);
   M5.Lcd.setTextSize(2);
-  File file = openFile();
+  String sData = readFile();
   opt = OPT_1;
-  if (file){
-    char str[128];
-    String sData = readFile();
 
-    if (sData != ""){
-      // int start = 0;
-      // int end = sData.indexOf(',', start);
-
-      // start = end + 1;
-      // end = sData.indexOf(',', start);
-      // sprintf(str, "test: %s", sData.substring(start, end)); //2
-      displayMode = DISPLAY_MAIN;
-      ShowDisplay(DISPLAY_MAIN);
-      // M5.Lcd.drawString(str, 10, 60, 2);
-    }
-    else{
-      displayMode = DISPLAY_SCAN;
-      ShowDisplay(DISPLAY_SCAN);
-      
-    }
+  if (sData != "" && sData != "\n"){
+    displayMode = DISPLAY_MAIN;
+    ShowDisplay(DISPLAY_MAIN);
   }
   else{
-    M5.Lcd.drawString("SPIFFS NOT WORKING...", 10, 0, 2);
+    displayMode = DISPLAY_SCAN;
+    ShowDisplay(DISPLAY_SCAN);
+    writeFile("1,2,3,4\n");
+    BLEScanPeripheralList();
+    deviceCount = pBLEAdvertiesdDeviceList.size();
   }
-  
-  // M5.Lcd.setTextColor(BLUE);
-  // M5.Lcd.drawCentreString("NEXT", 30, 260, 2);
-  // M5.Lcd.setTextColor(YELLOW);
-  // M5.Lcd.drawCentreString("READ", 170, 260, 2);
-  // M5.Lcd.setTextColor(GREEN);
-  // M5.Lcd.drawCentreString("WRITE", 260, 260, 2);
 
   M5.BtnA.addHandler(BtnAEvent, E_TOUCH);
   M5.BtnB.addHandler(BtnBEvent, E_TOUCH);
@@ -58,5 +48,26 @@ void setup() {
 
 void loop() {
   M5.update();
+
+  if ( M5.BtnB.pressedFor(1000)){
+    M5.Lcd.drawString("deleted file...", 10, 200, 2);
+    deleteFile();
+    esp_restart();
+  }
+  // M5.BtnB.addHandler(BtnBEvent, E_TOUCH);
+  if (displayMode == DISPLAY_SCAN && deviceCount > 0){
+    displayMode = DISPLAY_CONNECT;
+    ShowDisplay(DISPLAY_CONNECT);
+  }
+
+  if (displayMode == DISPLAY_MAIN && opt == OPT_1){
+    if (M5.BtnA.isPressed()) {
+      M5.Lcd.fillRect(0, 20, POSITION_WIDTH, POSITION_HEIGHT, TFT_GREEN);
+    } else {
+      M5.Lcd.fillRect(0, 20, POSITION_WIDTH, POSITION_HEIGHT, TFT_BLUE);
+    }
+    M5.Lcd.drawString(optDisplay[OPT_1], 100, 40, 2);
+    
+  }
   delay(100);
 }
