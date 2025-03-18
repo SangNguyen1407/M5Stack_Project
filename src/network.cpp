@@ -1,16 +1,13 @@
 #include "../lib/network.h"
-#include <M5Core2.h>
 
+std::vector<BLEAdvertisedDevice> pBLEAdvertiesdDeviceList;
+int device_count = 0;
 
-// std::vector<BLEAdvertisedDevice> pBLEAdvertiesdDeviceList;
-// int device_count = 0;
- 
 void ClientCallback::onConnect(BLEClient *pclient){
   BLESecurity *pSecurity = new BLESecurity();
   pSecurity->setAuthenticationMode(ESP_LE_AUTH_REQ_SC_BOND);
   pSecurity->setCapability(ESP_IO_CAP_IO);
   BLEDevice::setSecurityCallbacks(new TestSecurity());
-
 }
 
 void ClientCallback::onDisconnect(BLEClient *pclient){
@@ -39,12 +36,6 @@ void BLEStart(){
 
 void BLEEnd(){
   BLEDevice::deinit();
-}
-
-void BLEAdvertise(){
-  // BLEAdvertising* pAdvertising = pServer->getAdvertising();
-  // pAdvertising->addServiceUUID(pService->getUUID());
-  // pAdvertising->start();
 }
 
 void BLEScanPeripheralList(){

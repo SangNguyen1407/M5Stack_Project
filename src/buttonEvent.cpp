@@ -22,11 +22,6 @@ void BtnAEvent(Event& e){
 }
 
 void BtnBEvent(Event& e){
-  // DISPLAY_MODE mode = (displayMode == DISPLAY_SCAN)? DISPLAY_CONNECT : 
-  // (displayMode == DISPLAY_CONNECT)? DISPLAY_MAIN : DISPLAY_SCAN;
-  
-  // displayMode = mode;
-  // ShowDisplay(mode);
   ShowOptChoose();
 }
 

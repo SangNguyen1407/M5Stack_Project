@@ -4,9 +4,8 @@
 #include <M5Core2.h>
 
 extern const char *CONF_FILENAME;
-//extern File CONF_FILE;
 
-File openFile();
+
 String readFile();
 bool writeFile(const char *content);
 void deleteFile();

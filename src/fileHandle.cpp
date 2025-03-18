@@ -1,23 +1,21 @@
 #include "../lib/fileHandle.h"
 
 
-File openFile(){
-  bool success = SPIFFS.begin(true);
-  File file = SPIFFS.open(CONF_FILENAME, FILE_READ);
-  return file;
-}
-
 bool isExsisted(){
   bool success = SPIFFS.begin(true);
   return SPIFFS.exists(CONF_FILENAME);
 }
 
+/* ファイルのクローズ
+ */
 File closeFile(File file){
   if (file){
     file.close();
   }
 }
 
+/* ファイルの削除
+ */
 void deleteFile(){
   bool success = SPIFFS.begin(true);
   if (success){
@@ -25,6 +23,8 @@ void deleteFile(){
   }
 }
 
+/* ファイルの読み出す
+ */
 String readFile(){
   String sData = "";
   bool success = SPIFFS.begin(true);
@@ -40,6 +40,8 @@ String readFile(){
   return sData;
 }
 
+/* ファイルの書き込む
+ */
 bool writeFile(const char *content){
   bool success = SPIFFS.begin(true);
   File file = SPIFFS.open(CONF_FILENAME, FILE_WRITE);

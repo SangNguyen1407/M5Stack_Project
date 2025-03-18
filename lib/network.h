@@ -5,6 +5,7 @@
 #include <BLEClient.h>
 #include <BLEDevice.h>
 #include <BLESecurity.h>
+#include <M5Core2.h>
 
 #define SERVICE_UUID        ""
 #define CHARACTERISTIC_UUID ""
@@ -28,17 +29,17 @@ class AdvertisedDeviceCallbacks: public BLEAdvertisedDeviceCallbacks {
 class TestSecurity : public BLESecurityCallbacks {
   uint32_t onPassKeyRequest() {
       Serial.println("PassKeyRequest");
-      return 123456; // Return your desired PIN
+      return 123456;
   }
   void onPassKeyNotify(uint32_t pass_key) {
       Serial.println("PassKeyNotify");
   }
   bool onConfirmPIN(uint32_t pass_key) {
       Serial.printf("Confirming PIN: %d\n", pass_key);
-      return true; // Return true if the PIN is correct
+      return true;
   }
   bool onSecurityRequest() {
-      return true; // Allow pairing requests
+      return true;
   }
   void onAuthenticationComplete(esp_ble_auth_cmpl_t auth_cmpl) {
       if (auth_cmpl.success) {
@@ -51,10 +52,7 @@ class TestSecurity : public BLESecurityCallbacks {
 
 void BLEStart();
 void BLEEnd();
-
-void BLEAdvertise();
 bool ConnectToServer();
 void BLEScanPeripheralList();
 
-
-#endif
+#endif //NETWORK_H
