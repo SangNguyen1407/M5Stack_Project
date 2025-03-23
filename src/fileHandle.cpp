@@ -42,7 +42,7 @@ String readFile(){
 
 /* ファイルの書き込む
  */
-bool writeFile(const char *content){
+bool writeFile(const char *content, const char *priority){
   bool success = SPIFFS.begin(true);
   File file = SPIFFS.open(CONF_FILENAME, FILE_WRITE);
 

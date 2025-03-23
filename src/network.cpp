@@ -1,16 +1,16 @@
 #include "../lib/network.h"
 
-std::vector<BLEAdvertisedDevice> pBLEAdvertiesdDeviceList;
-int device_count = 0;
+// std::vector<BLEAdvertisedDevice> pBLEAdvertiesdDeviceList;
+// int device_count = 0;
 
 void ClientCallback::onConnect(BLEClient *pclient){
   BLESecurity *pSecurity = new BLESecurity();
   pSecurity->setAuthenticationMode(ESP_LE_AUTH_REQ_SC_BOND);
   pSecurity->setCapability(ESP_IO_CAP_IO);
-  BLEDevice::setSecurityCallbacks(new TestSecurity());
 }
 
 void ClientCallback::onDisconnect(BLEClient *pclient){
+
 }
 
 void AdvertisedDeviceCallbacks::onResult(BLEAdvertisedDevice advertisedDevice) {
@@ -19,7 +19,7 @@ void AdvertisedDeviceCallbacks::onResult(BLEAdvertisedDevice advertisedDevice) {
   }
 }
 
-void BLEStart(){
+void BLEControl::BLEStart(){
   BLEDevice::init(CENTRAL_NAME);
   BLEServer* pServer = BLEDevice::createServer();
   BLEService* pService = pServer->createService(SERVICE_UUID);
@@ -34,14 +34,14 @@ void BLEStart(){
   pService->start();
 }
 
-void BLEEnd(){
+void BLEControl::BLEEnd(){
   BLEDevice::deinit();
 }
 
-void BLEScanPeripheralList(){
+void BLEControl::BLEScanPeripheralList(){
   BLEDevice::init("");
   BLEScan* pBLEScan = BLEDevice::getScan();
-  pBLEScan->setAdvertisedDeviceCallbacks(new AdvertisedDeviceCallbacks());
+  pBLEScan->setAdvertisedDeviceCallbacks(advertiseDeviceCB);
   pBLEScan->setInterval(100);
   pBLEScan->setWindow(99);
   pBLEScan->setActiveScan(true);
@@ -49,8 +49,8 @@ void BLEScanPeripheralList(){
   pBLEScan->start(5, false);
 }
 
-bool ConnectToServer(){
-  BLEAdvertisedDevice pPeriphrealDevice = pBLEAdvertiesdDeviceList.at(device_count);
+bool BLEControl::ConnectToServer(){
+  BLEAdvertisedDevice pPeriphrealDevice = advertiseDeviceCB->pBLEAdvertiesdDeviceList.at(0);
   BLEClient *pClient = BLEDevice::createClient();
 
   pClient->connect(&pPeriphrealDevice);

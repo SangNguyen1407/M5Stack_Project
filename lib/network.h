@@ -12,8 +12,8 @@
 #define CENTRAL_NAME        "C_TEST"
 #define PERIPHERAL_NAME     "P_TEST"
 
-extern std::vector<BLEAdvertisedDevice> pBLEAdvertiesdDeviceList;
-extern int device_count; 
+// extern std::vector<BLEAdvertisedDevice> pBLEAdvertiesdDeviceList;
+// extern int device_count; 
 
 class ClientCallback : public BLEClientCallbacks {
   public:
@@ -23,36 +23,26 @@ class ClientCallback : public BLEClientCallbacks {
 
 class AdvertisedDeviceCallbacks: public BLEAdvertisedDeviceCallbacks {
   public:
+    std::vector<BLEAdvertisedDevice> pBLEAdvertiesdDeviceList;
     virtual void onResult (BLEAdvertisedDevice advertisedDevice);
 };
 
-class TestSecurity : public BLESecurityCallbacks {
-  uint32_t onPassKeyRequest() {
-      Serial.println("PassKeyRequest");
-      return 123456;
-  }
-  void onPassKeyNotify(uint32_t pass_key) {
-      Serial.println("PassKeyNotify");
-  }
-  bool onConfirmPIN(uint32_t pass_key) {
-      Serial.printf("Confirming PIN: %d\n", pass_key);
-      return true;
-  }
-  bool onSecurityRequest() {
-      return true;
-  }
-  void onAuthenticationComplete(esp_ble_auth_cmpl_t auth_cmpl) {
-      if (auth_cmpl.success) {
-          Serial.println("Authentication successful!");
-      } else {
-          Serial.println("Authentication failed.");
-      }
-  }
+class BLEControl{
+    public:
+        AdvertisedDeviceCallbacks *advertiseDeviceCB;
+
+        BLEControl(){
+            advertiseDeviceCB = new AdvertisedDeviceCallbacks();
+        };
+        ~BLEControl(){
+            delete(advertiseDeviceCB);
+        };
+
+        void BLEEnd();
+        void BLEStart();
+        bool ConnectToServer();
+        void BLEScanPeripheralList();
 };
 
-void BLEStart();
-void BLEEnd();
-bool ConnectToServer();
-void BLEScanPeripheralList();
 
 #endif //NETWORK_H

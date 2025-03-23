@@ -3,30 +3,24 @@
 #include "../lib/display.h"
 #include "../lib/fileHandle.h"
 
-/* Scan button
- */
-void BtnAEvent(Event& e){
+// /* Scan button
+//  */
+// void BtnAEvent(Event& e){
   
-  if (displayMode == DISPLAY_MAIN && opt == OPT_1){
-  }
-  else if (displayMode == DISPLAY_MAIN && opt == OPT_2){
-    handleOpt(displayMode);
-  }
-  else if (displayMode == DISPLAY_CONNECT && opt == OPT_1){
-    nextDevice();
-  }
-  else if (displayMode == DISPLAY_CONNECT && opt == OPT_2){
-    displayMode = DISPLAY_MAIN;
-    ShowDisplay(DISPLAY_MAIN);
-  }
-}
+//   switch (displayMode){
+//     case DISPLAY_CONNECT:
+//       if (M5.BtnA.wasPressed()){
+//         nextDevice();
+//       }
+//       break;
+//     case DISPLAY_SETUP:
+//       displayStrenghtOpt();
+//       break;
+//   }
+// }
 
-void BtnBEvent(Event& e){
-  ShowOptChoose();
-}
-
-/* Connect button
- */
-void BtnCEvent(Event& e){
-  writeFile("1,2,3,4\n");
-}
+// void BtnBEvent(Event& e){
+//   if (displayMode == DISPLAY_CONNECT || displayMode == DISPLAY_MAIN){
+//     ShowOptChoose();
+//   }
+// }

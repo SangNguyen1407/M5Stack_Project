@@ -7,7 +7,7 @@ extern const char *CONF_FILENAME;
 
 
 String readFile();
-bool writeFile(const char *content);
+bool writeFile(const char *content, const char *priority);
 void deleteFile();
 
 #endif //FILE_HANDLE_H

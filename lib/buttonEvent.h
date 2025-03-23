@@ -4,8 +4,8 @@
 #include <M5Core2.h>
 #include "../lib/network.h"
 
-void BtnAEvent(Event& e);
-void BtnBEvent(Event& e);
-void BtnCEvent(Event& e);
+//void BtnAEvent(Event& e);
+// void BtnBEvent(Event& e);
+// void BtnCEvent(Event& e);
 
 #endif //BUTTONEVENT_H

@@ -6,116 +6,192 @@
 #include "../lib/network.h"
 #include "../lib/fileHandle.h"
 
-int POSITON_X = 20;
-int POSITON_Y = 20;
-int POSITION_HEIGHT = 60;
-int POSITION_WIDTH = M5.Lcd.width();
+#define DISPLAY_MAX_SIZE 6
+#define FONT_JAPAN       4
+#define LINE_MAX_CHAR    10
 
-const char *CONNECT_OPT[] = {"NEXT", "OK"};
-const char *MAIN_OPT[] = {"PUSH", "STRENGTH"};
+#define TITLE_1_COLOR    TFT_DARKGREEN
 
-const char *optDisplay[OPT_MAX-1]; 
-DISPLAY_MODE displayMode = DISPLAY_SCAN;
-OPTS opt = OPT_1;
-LEVEL optStrength = LEVEL_WEAK;
+int title_h   = 30;
+int padding_x = 10;
+int padding_y = 5;
+int circle    = 10;
 
-void ShowDisplay(DISPLAY_MODE mode){
-    M5.Lcd.setTextSize(1);
+int content_h = M5.Lcd.width() - title_h * 2;
+int content_w = M5.Lcd.height();
+
+void DISPLAY_SHOW::showTitle1(String title){
+    M5.Lcd.fillRect(0, 0, content_w, title_h, TITLE_1_COLOR);
+    M5.Lcd.drawString(title, padding_x, padding_y, FONT_JAPAN);
+}
+
+void DISPLAY_SHOW::showTitle2(String title){
+    int color = (title == "1")? TFT_GREEN : (title == "2")? TFT_YELLOW : TFT_RED;
+
+    M5.Lcd.fillRect(0, title_h + content_h, content_w, content_h, color);
+}
+
+void DISPLAY_SHOW::showLineOff(String device_name, int pos){
+    M5.Lcd.fillRoundRect(0, title_h * pos, content_w, title_h, circle, TFT_BLACK);
+    M5.Lcd.drawRoundRect(0, title_h * pos, content_w, title_h, circle, TFT_WHITE);
+    M5.Lcd.drawString(device_name, padding_x, title_h*pos + padding_y, FONT_JAPAN);
+}
+
+void DISPLAY_SHOW::showLineOn(String device_name, int pos){
+    M5.Lcd.fillRoundRect(0, title_h * pos, content_w, title_h, circle, TFT_DARKCYAN);
+    M5.Lcd.drawRoundRect(0, title_h * pos, content_w, title_h, circle, TFT_WHITE);
+    M5.Lcd.drawString(device_name, padding_x, title_h*pos + padding_y, FONT_JAPAN);
+}
+
+void DISPLAY_SHOW::ShowDisplay(DISPLAY_MODE mode){
+    displayMode = mode;
+    ShowDisplay();
+}
+
+void DISPLAY_SHOW::ShowDisplay(){
+    M5.Lcd.fillRect(0, 0, content_w, content_h + title_h*2, TFT_BLACK);
     M5.Lcd.setTextColor(WHITE);
-    M5.Lcd.fillRect(0, 0, POSITION_WIDTH + 100, 20, TFT_DARKGREY);
 
-    opt = OPT_1;
-    switch (mode)
-    {
+    switch (displayMode) {
         case DISPLAY_SCAN:
-            M5.Lcd.setTextSize(2);
-            M5.Lcd.drawString("SCANNING", 40, POSITION_HEIGHT + 40, 1);
+            showTitle1("SCANNING");
             break;
 
         case DISPLAY_CONNECT:
-            M5.Lcd.drawString("CONNECT", 120, 6, 1);
-            device_count = 0;
-            char str[128];
-            sprintf(str, "%s %d/%d", pBLEAdvertiesdDeviceList.at(0).getName().c_str(), 
-                                        device_count + 1, 
-                                        pBLEAdvertiesdDeviceList.size());
-            optDisplay[OPT_1] = str;
-            optDisplay[OPT_2] = CONNECT_OPT[OPT_2];
-            ShowOptChoose();
+            showTitle1("CONNECT");
             break;
 
         case DISPLAY_MAIN:
-            M5.Lcd.drawString("MAIN", 120, 6, 1);
-            for(int opt=0; opt < OPT_MAX; opt++) {
-                optDisplay[opt] = MAIN_OPT[opt];
-            }
-            ShowOptChoose();
+            showTitle1(device_name);
+            showTitle2(strength_level);
             break;
+
+        case DISPLAY_STRENGTH_SETUP:
+            showTitle1("SETUP");
+            showStrengthLevel();
+            break;
+
         default:
             break;
     }
 }
 
-void ShowOptChoose(){
-    M5.Lcd.fillRect(0, 20, POSITION_WIDTH, POSITION_HEIGHT*3, BLACK);
-    char str[128];
-    switch (opt)
-    {
-        case OPT_1:
-            opt = OPT_2;
-            M5.Lcd.fillRect(0, POSITION_HEIGHT + 20, POSITION_WIDTH, POSITION_HEIGHT, TFT_BLUE);
-            break;
-        case OPT_2:
-            opt = OPT_1;
-            M5.Lcd.fillRect(0, 20, POSITION_WIDTH, POSITION_HEIGHT, TFT_BLUE);
-            if (displayMode == DISPLAY_MAIN){
-                int level = (optStrength == LEVEL_WEAK)? 1 : (optStrength == LEVEL_MID)? 2 : 3;
-                memset(str,'\0', 128);
-                sprintf(str, "%d,\n", level);
-                writeFile(str);
-            }
-            break;
-        default:
-            opt = OPT_1;
-            M5.Lcd.fillRect(0, 20, POSITION_WIDTH, POSITION_HEIGHT, TFT_BLUE);
-            break;
-    }
-
-    if (displayMode == DISPLAY_MAIN){
-        int color = (optStrength == LEVEL_WEAK)? TFT_GREEN : (optStrength == LEVEL_MID)? TFT_YELLOW : TFT_RED;
-        M5.Lcd.fillRect(0, POSITION_HEIGHT + 20, POSITION_WIDTH, POSITION_HEIGHT, color);
-    }
-    if (displayMode == DISPLAY_CONNECT){
-        memset(str,'\0', 128);
-        sprintf(str, "%s %d/%d", pBLEAdvertiesdDeviceList.at(device_count).getName().c_str(), 
-        device_count + 1, 
-        pBLEAdvertiesdDeviceList.size());
-        optDisplay[OPT_1] = str;
+void DISPLAY_SHOW::displayScanDevice(std::vector<BLEAdvertisedDevice> pAdvertiesdDeviceList){
+    M5.Lcd.fillRect(0, 40, content_w, content_h, TFT_BLACK);
+    int device_max = pAdvertiesdDeviceList.size();
+    if (device_max <= 0){
+        return;
     }
     
-    M5.Lcd.setTextSize(2);
-    M5.Lcd.setTextColor(WHITE);
-    M5.Lcd.drawString(optDisplay[OPT_1], 100, 40, 2);
-    M5.Lcd.drawString(optDisplay[OPT_2], 100, POSITION_HEIGHT + 40, 2);
-}
-
-void handleOpt(DISPLAY_MODE mode){
-    optStrength = (optStrength == LEVEL_WEAK)? LEVEL_MID : (optStrength == LEVEL_MID)? LEVEL_HIGHT : LEVEL_WEAK;
-    int color = (optStrength == LEVEL_WEAK)? TFT_GREEN : (optStrength == LEVEL_MID)? TFT_YELLOW : TFT_RED;
-    M5.Lcd.fillRect(0, POSITION_HEIGHT + 20, POSITION_WIDTH, POSITION_HEIGHT, color);
-    M5.Lcd.drawString(optDisplay[OPT_2], 100, POSITION_HEIGHT + 40, 2);
-}
-
-void nextDevice(){
-    M5.Lcd.fillRect(0, 20, POSITION_WIDTH, POSITION_HEIGHT, BLUE);
-    device_count++;
-    if (device_count >= pBLEAdvertiesdDeviceList.size()){
-        device_count = 0;
+    M5.Lcd.fillRoundRect(0, 30, content_w, 30, 10, TFT_DARKCYAN);
+    int count = 0;
+    for (int opt = 0; opt< 10; opt++){
+        if (count > 5){
+            break;
+        }
+        M5.Lcd.drawRoundRect(0, 30*(opt+1), content_w, 30, 10, TFT_WHITE);
+        M5.Lcd.drawString(pAdvertiesdDeviceList.at(opt).getName().substr(0,LINE_MAX_CHAR).c_str(), 10, 30*(opt+1), FONT_JAPAN);
     }
-    char str[128];
-    sprintf(str, "%s %d/%d", pBLEAdvertiesdDeviceList.at(device_count).getName().c_str(), 
-                                device_count + 1, 
-                                pBLEAdvertiesdDeviceList.size());
-    optDisplay[OPT_1] = str;
-    M5.Lcd.drawString(optDisplay[OPT_1], 100, 40, 2);
+
+}
+
+void DISPLAY_SHOW::showAdvertisedDeviceList(std::vector<BLEAdvertisedDevice> adverties_device_list, int start){
+
+    M5.Lcd.fillRect(0, title_h, content_w, content_h, TFT_BLACK);
+    int adverties_devices_count = (start + DISPLAY_MAX_SIZE > adverties_device_list.size())? 
+                                    adverties_device_list.size() : start + DISPLAY_MAX_SIZE;
+
+    for (int pos = start; pos< adverties_devices_count; pos++){
+        int pos1 = pos % DISPLAY_MAX_SIZE;
+        
+        M5.Lcd.drawRoundRect(0, title_h*(pos1 + 1), content_w, title_h, circle, TFT_WHITE);
+        M5.Lcd.drawString(adverties_device_list.at(pos).getName().substr(0,LINE_MAX_CHAR).c_str(), padding_x, title_h*(pos1 + 1) + padding_y, FONT_JAPAN);
+    }   
+}
+
+void DISPLAY_SHOW::chooseDevice(std::vector<BLEAdvertisedDevice> adverties_device_list, int start){
+    // 画面にデバイスの地位
+    int opt_pos = start % DISPLAY_MAX_SIZE;
+
+    if (opt_pos == 0){
+        //　リストをリセットする
+        showAdvertisedDeviceList(adverties_device_list, start);   
+    }
+    else {
+        //　選択しない線
+        showLineOff(adverties_device_list.at(start-1).getName().substr(0, LINE_MAX_CHAR).c_str(), opt_pos);
+    }
+    //　選択線
+    showLineOn(adverties_device_list.at(start).getName().substr(0, LINE_MAX_CHAR).c_str(), opt_pos + 1);
+    
+}
+
+
+
+void DISPLAY_SHOW::displayScanDevice(std::vector<String> device_list){
+    M5.Lcd.fillRect(0, 40, content_w, content_h, TFT_BLACK);
+    int device_max = device_list.size();
+    if (device_max <= 0){
+        return;
+    }
+    
+    M5.Lcd.fillRoundRect(0, 30, content_w, 30, 10, TFT_DARKCYAN);
+    int count = 0;
+    for (int opt = 0; opt< 10; opt++){
+        if (count > 5){
+            break;
+        }
+        M5.Lcd.drawRoundRect(0, title_h*(opt+1), content_w, title_h, 10, TFT_WHITE);
+        M5.Lcd.drawString(device_list.at(opt).substring(0, LINE_MAX_CHAR), padding_x, title_h*(opt+1) + padding_y, FONT_JAPAN);
+    }
+}
+
+void DISPLAY_SHOW::chooseDevice(std::vector<String> device_list, int start){
+    // 画面にデバイスの地位
+    int opt_pos = start % DISPLAY_MAX_SIZE;
+
+    if (opt_pos == 0){
+        //　リストをリセットする
+        showAdvertisedDeviceList(device_list, start);   
+    }
+    else {
+        //　選択しない線
+        showLineOff(device_list.at(start-1).substring(0,LINE_MAX_CHAR), opt_pos);
+    }
+    //　選択線
+    showLineOn(device_list.at(start).substring(0, LINE_MAX_CHAR), opt_pos + 1);
+}
+
+void DISPLAY_SHOW::showAdvertisedDeviceList(std::vector<String> device_list, int start){
+    M5.Lcd.fillRect(0, title_h, content_w, content_h, TFT_BLACK);
+    int adverties_devices_count = (start + DISPLAY_MAX_SIZE > device_list.size())? 
+    device_list.size() : start + DISPLAY_MAX_SIZE;
+
+    for (int pos = start; pos< adverties_devices_count; pos++){
+        int pos1 = pos % DISPLAY_MAX_SIZE;
+        
+        M5.Lcd.drawRoundRect(0, title_h*(pos1 + 1), content_w, title_h, circle, TFT_WHITE);
+        M5.Lcd.drawString(device_list.at(pos).substring(0, LINE_MAX_CHAR), padding_x, title_h*(pos1 + 1) + padding_y, FONT_JAPAN);
+    }   
+}
+
+
+void DISPLAY_SHOW::showAssistOn(){
+    M5.Lcd.fillRect(0, title_h, content_w, content_h, TFT_GREEN);
+}
+void DISPLAY_SHOW::showAssistOff(){
+    M5.Lcd.fillRect(0, title_h, content_w, content_h, TFT_DARKGREY);
+}
+
+void DISPLAY_SHOW::updateStrengthLevel(){
+    strength_level = (strength_level == "1")? "2" : (strength_level == "2")? "3" : "1";
+}
+
+void DISPLAY_SHOW::showStrengthLevel(){
+    int color = (strength_level == "1")? TFT_GREEN : (strength_level == "2")? TFT_YELLOW : TFT_RED;
+    const char *level = (strength_level == "1")? "L" : (strength_level == "2")? "M" : "H";
+
+    M5.Lcd.drawString("LEVEL: ", 0, title_h * 2, FONT_JAPAN);
+    M5.Lcd.fillRect( content_w/2, title_h * 2 - padding_y, title_h * 2, title_h, color);
+    M5.Lcd.drawString(level, content_w/2 + padding_x*2, title_h * 2, FONT_JAPAN);
 }
