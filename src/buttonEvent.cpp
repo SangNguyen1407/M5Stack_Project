@@ -1,6 +1,6 @@
 #include "../lib/buttonEvent.h"
-#include "../lib/network.h"
-#include "../lib/display.h"
+#include "../lib/networkHandle.h"
+#include "../lib/displayHandle.h"
 #include "../lib/fileHandle.h"
 
 // /* Scan button

@@ -1,5 +1,5 @@
-#ifndef NETWORK_H
-#define NETWORK_H
+#ifndef NETWORK_HANDLE_H
+#define NETWORK_HANDLE_H
 
 #include <Arduino.h>
 #include <BLEClient.h>
@@ -70,4 +70,4 @@ class BLEControl{
 };
 
 
-#endif //NETWORK_H
+#endif //NETWORK_HANDLE_H
