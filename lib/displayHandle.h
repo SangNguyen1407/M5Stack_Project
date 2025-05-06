@@ -9,10 +9,13 @@ extern int height;
 #define LIST_MENU_MAX    4
 
 typedef enum {
-    DISPLAY_MENU = 0,
-    DISPLAY_BLUETOOTH,
+    DISPLAY_BLUETOOTH = 0,
     DISPLAY_CLOCK,
     DISPLAY_WIFI,
+    DISPLAY_MENU,
+    DISPLAY_TIME,
+    DISPLAY_COUNT,
+    DISPLAY_ALARM,
 } DISPLAY_MODE;
 
 typedef enum {
@@ -21,12 +24,9 @@ typedef enum {
     LEVEL_HIGHT
 } LEVEL;
 
-// const char *LIST_MENU[LIST_MENU_MAX] = {
-//     "MENU",
-//     "Bluetooth",
-//     "CLOCK",
-//     "WIFI"
-// };
+extern const char *LIST_MENU[LIST_MENU_MAX];
+extern const char *LIST_BLE[LIST_MENU_MAX];
+extern const char *LIST_CLOCK[LIST_MENU_MAX];
 
 class DISPLAY_SHOW{
     private: 
@@ -39,12 +39,6 @@ class DISPLAY_SHOW{
         String device_name;
 
         DISPLAY_SHOW() {
-            const char *LIST_MENU[LIST_MENU_MAX] = {
-                            "MENU",
-                            "BLUETOOTH",
-                            "CLOCK",
-                            "WIFI"
-                        };
             for(int pos = 0; pos < LIST_MENU_MAX; pos++){
                 list.push_back(LIST_MENU[pos]);
             }
@@ -88,6 +82,7 @@ class DISPLAY_SHOW{
 
         void setModeDisplay(DISPLAY_MODE mode);
         DISPLAY_MODE getModeDisplay();
+        void addListMenu(const char *list_menu[LIST_MENU_MAX]); 
 };
 
 

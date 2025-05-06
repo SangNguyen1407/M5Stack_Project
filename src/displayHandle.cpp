@@ -1,10 +1,10 @@
 #include <Arduino.h>
 #include <M5Core2.h>
 
-#include "../lib/buttonEvent.h"
+// #include "../lib/buttonEvent.h"
 #include "../lib/displayHandle.h"
-#include "../lib/networkHandle.h"
-#include "../lib/fileHandle.h"
+// #include "../lib/networkHandle.h"
+// #include "../lib/fileHandle.h"
 
 #define DISPLAY_MAX_SIZE 6
 #define FONT             4
@@ -14,6 +14,45 @@ int title_h   = 30;
 int padding_x = 10;
 int padding_y = 5;
 int circle    = 10;
+
+const char *LIST_MENU[LIST_MENU_MAX] = {
+    "BLUETOOTH",
+    "CLOCK",
+    "WIFI",
+    "GAME"
+};
+
+const char *LIST_BLE[LIST_MENU_MAX] = {
+    "SCAN",
+    "CENTERAL",
+    "PERIHERAL",
+    "MAX"
+};
+
+const char *LIST_CLOCK[LIST_MENU_MAX] = {
+    "TIME",
+    "COUNT",
+    "ALARM",
+    "STEP WATCH"
+};
+
+const char *LIST_GAME[LIST_MENU_MAX] = {
+    "CARO",
+    "ANGRY BIRD",
+    "MAX_1",
+    "MAX_2"
+};
+
+void DISPLAY_SHOW::addListMenu(const char *list_menu[]){
+    if (list.size()> 0){
+        list.clear();
+    }
+
+    int list_size = sizeof(list_menu)/ sizeof(list_menu[0]);
+    for(int pos = 0; pos < LIST_MENU_MAX; pos++){
+        list.push_back(list_menu[pos]);
+    }
+}
 
 void DISPLAY_SHOW::showTitleOnTop(String title){
     M5.Lcd.fillRect(0, 0, width, title_h, TFT_DARKGREEN);
@@ -53,9 +92,9 @@ void DISPLAY_SHOW::showListMenu(int start){
                 list.size() : start + DISPLAY_MAX_SIZE;
 
     for (int pos = start; pos< list_max; pos++){
-        int pos1 = pos % DISPLAY_MAX_SIZE;
-        M5.Lcd.drawRoundRect(0, title_h*(pos1 + 1), width, title_h, circle, TFT_WHITE);
-        M5.Lcd.drawCentreString(list.at(pos), width/2, title_h*(pos1 + 1) + padding_y, FONT);
+        int diplay_pos = pos % DISPLAY_MAX_SIZE;
+        M5.Lcd.drawRoundRect(0, title_h*(diplay_pos + 1), width, title_h, circle, TFT_WHITE);
+        M5.Lcd.drawCentreString(list.at(pos), width/2, title_h*(diplay_pos + 1) + padding_y, FONT);
     }   
 }
 

@@ -2,10 +2,11 @@
 #define NETWORK_HANDLE_H
 
 #include <Arduino.h>
+#include <M5Core2.h>
+
 #include <BLEClient.h>
 #include <BLEDevice.h>
 #include <BLESecurity.h>
-#include <M5Core2.h>
 #include <BLE2902.h>
 
 #define SERVICE_UUID        "1234"
