@@ -25,8 +25,8 @@ typedef enum {
 } LEVEL;
 
 extern const char *LIST_MENU[LIST_MENU_MAX];
-extern const char *LIST_BLE[LIST_MENU_MAX];
-extern const char *LIST_CLOCK[LIST_MENU_MAX];
+// extern const char *LIST_BLE[LIST_MENU_MAX];
+// extern const char *LIST_CLOCK[LIST_MENU_MAX];
 
 class DISPLAY_SHOW{
     private: 

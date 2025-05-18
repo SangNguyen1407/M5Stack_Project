@@ -1,10 +1,10 @@
 #include <Arduino.h>
 #include <M5Core2.h>
 
-// #include "../lib/buttonEvent.h"
-#include "../lib/displayHandle.h"
-// #include "../lib/networkHandle.h"
-// #include "../lib/fileHandle.h"
+// #include "buttonEvent.h"
+#include "displayHandle.h"
+// #include "networkHandle.h"
+// #include "fileHandle.h"
 
 #define DISPLAY_MAX_SIZE 6
 #define FONT             4
@@ -20,27 +20,6 @@ const char *LIST_MENU[LIST_MENU_MAX] = {
     "CLOCK",
     "WIFI",
     "GAME"
-};
-
-const char *LIST_BLE[LIST_MENU_MAX] = {
-    "SCAN",
-    "CENTERAL",
-    "PERIHERAL",
-    "MAX"
-};
-
-const char *LIST_CLOCK[LIST_MENU_MAX] = {
-    "TIME",
-    "COUNT",
-    "ALARM",
-    "STEP WATCH"
-};
-
-const char *LIST_GAME[LIST_MENU_MAX] = {
-    "CARO",
-    "ANGRY BIRD",
-    "MAX_1",
-    "MAX_2"
 };
 
 void DISPLAY_SHOW::addListMenu(const char *list_menu[]){

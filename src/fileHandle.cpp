@@ -1,4 +1,4 @@
-#include "../lib/fileHandle.h"
+#include "fileHandle.h"
 
 
 bool isExsisted(){

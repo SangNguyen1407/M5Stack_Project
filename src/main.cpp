@@ -4,11 +4,11 @@
 #include <BLE2902.h>
 #include <SPIFFS.h>
 
-#include "../lib/displayHandle.h"
-#include "../lib/networkHandle.h"
-#include "../lib/buttonEvent.h"
-#include "../lib/fileHandle.h"
-#include "../lib/wifiHandle.h"
+#include "displayHandle.h"
+#include "networkHandle.h"
+#include "buttonEvent.h"
+#include "fileHandle.h"
+#include "wifiHandle.h"
 
 using namespace std;
 
@@ -42,13 +42,16 @@ void setup() {
 
 void loop() {
   M5.update();
-
+/*
+    "BLUETOOTH",
+    "CLOCK",
+    "WIFI",
+    "GAME"
+ */
   switch (display.getModeDisplay()){
     case DISPLAY_BLUETOOTH:
       if(isShowing){
           display.showTitleOnTop((int)DISPLAY_BLUETOOTH);
-
-          display.addListMenu(LIST_BLE);
           display.showListMenu(0);
           isShowing = false;
           item_pos = 0;
@@ -56,10 +59,28 @@ void loop() {
           display.chooseItem(0);
       }
       break;
+    
+    case DISPLAY_CLOCK:
+      if(isShowing){ 
+        display.showTitleOnTop((int)DISPLAY_CLOCK);
+        display.resetDisplay();
+        wifi.printLocalDay();
+        isShowing = false;
+      }
 
+      wifi.printLocalTime();
+      break;
+
+    case DISPLAY_WIFI:
+      if(isShowing){
+        display.showTitleOnTop((int)DISPLAY_WIFI);
+        isShowing = false;
+      }
+      break;
+    
     case DISPLAY_MENU:
       if(isShowing){
-        display.showTitleOnTop("MENU");
+        display.showTitleOnTop((int)DISPLAY_MENU);
 
         display.addListMenu(LIST_MENU);
         display.showListMenu(0);
@@ -69,43 +90,13 @@ void loop() {
         display.chooseItem(0);
       }
       break;
-
-    case DISPLAY_CLOCK:
-      if(isShowing){
-        display.showTitleOnTop((int)DISPLAY_CLOCK);
-        display.addListMenu(LIST_CLOCK);
-        display.showListMenu(0);
-        isShowing = false;
-        item_pos = 0;
-
-        display.chooseItem(0);
-      }
-      else if(isHandle){
-        isHandle = false;
-        switch (item_pos)
-        {
-          case 0: // TIME
-          display.setModeDisplay(DISPLAY_TIME);
-          break;
-          case 1: // COUNT
-          break;
-        }
-      } 
-      break;
-
-    case DISPLAY_WIFI:
-      if(isShowing){
-        display.showTitleOnTop((int)DISPLAY_WIFI);
-        isShowing = false;
-      }
-      break;
-
-    case DISPLAY_TIME:
-      wifi.printLocalTime();
-      break;
   }
 
   if (M5.BtnA.wasReleased()){
+    if (display.getModeDisplay() != DISPLAY_MENU){
+      return;
+    }
+    
     item_pos++;
     if (item_pos >= display.getListMenuSize()){
        item_pos = 0;
@@ -114,31 +105,8 @@ void loop() {
   }
 
   if (M5.BtnB.wasReleased()){
-    // reset display
-    display.resetDisplay();
-    // show display
-    if (display.getModeDisplay() == DISPLAY_MENU){
-      display.setModeDisplay((DISPLAY_MODE)item_pos);
-      isShowing = true;
-      //reset position
-      item_pos = 0;
-    }
-    else{
-      // Title
-      switch (display.getModeDisplay())
-      {
-        case DISPLAY_BLUETOOTH:
-        //  display.showTitleOnTop(LIST_BLE[item_pos]);
-          break;
-        case DISPLAY_CLOCK:
-          display.showTitleOnTop(LIST_CLOCK[item_pos]);
-          break;
-        case DISPLAY_WIFI:
-          break;
-      }
-
-      isHandle = true;
-    }
+    display.setModeDisplay((DISPLAY_MODE)item_pos);
+    isShowing = true;
   }
 
   if (M5.BtnC.wasReleased()){

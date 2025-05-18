@@ -1,4 +1,4 @@
-#include "../lib/networkHandle.h"
+#include "networkHandle.h"
 
 const char* ssid       = "00CAE0892657-5G";
 const char* password   = "segmgx6nxz7c98";

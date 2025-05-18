@@ -1,7 +1,7 @@
-#include "../lib/buttonEvent.h"
-#include "../lib/networkHandle.h"
-#include "../lib/displayHandle.h"
-#include "../lib/fileHandle.h"
+#include "buttonEvent.h"
+#include "networkHandle.h"
+#include "displayHandle.h"
+#include "fileHandle.h"
 
 // /* Scan button
 //  */
