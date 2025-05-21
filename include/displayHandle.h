@@ -57,6 +57,8 @@ class DISPLAY_SHOW{
         void showTitleOnTop(int pos);
         void showTitleOnMiddle(String title);
 
+        void printTime(tm time);
+
 
         // void displayScanDevice(std::vector<String> device_list);
         // void showAdvertisedDeviceList(std::vector<String> device_list, int opt);

@@ -16,10 +16,11 @@ class WIFI_NETWORK{
     public:
         void setupWifi();
         
-        void printLocalTime();
-        void printLocalDay();
-        void printInfo();
+        void printLocalTime(tm timeinfo);
+        void printLocalDay(tm timeinfo);
         
+        tm getLocalTimeInfo();
+        bool nextSecondTime(tm *time);
         String getHostName();
         String getDNSAddress();
 };

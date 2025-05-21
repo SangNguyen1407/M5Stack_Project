@@ -49,6 +49,14 @@ void DISPLAY_SHOW::showTitleOnMiddle(String title){
     M5.Lcd.fillRect(0, title_h + height, width, height, color);
 }
 
+void printTime(tm time){
+  char time_char[100];
+  memset(time_char, '/0', 100);
+
+  M5.Lcd.fillRect(0, 60, 320, 60, TFT_BLACK);
+  M5.Lcd.drawCentreString(time_char, 0, 100, 4);
+}
+
 void DISPLAY_SHOW::showLineOff(String item, int pos){
     M5.Lcd.fillRoundRect(0, title_h*pos, width, title_h, circle, TFT_BLACK);
     M5.Lcd.drawRoundRect(0, title_h*pos, width, title_h, circle, TFT_WHITE);

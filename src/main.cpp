@@ -6,7 +6,6 @@
 
 #include "displayHandle.h"
 #include "networkHandle.h"
-#include "buttonEvent.h"
 #include "fileHandle.h"
 #include "wifiHandle.h"
 
@@ -18,6 +17,7 @@ static bool isShowing;
 static bool isHandle;
 static int list_size;
 static int item_pos; 
+static struct tm timeinfo;
 WIFI_NETWORK wifi;
 
 int width;
@@ -42,12 +42,7 @@ void setup() {
 
 void loop() {
   M5.update();
-/*
-    "BLUETOOTH",
-    "CLOCK",
-    "WIFI",
-    "GAME"
- */
+  
   switch (display.getModeDisplay()){
     case DISPLAY_BLUETOOTH:
       if(isShowing){
@@ -62,13 +57,15 @@ void loop() {
     
     case DISPLAY_CLOCK:
       if(isShowing){ 
+        timeinfo = wifi.getLocalTimeInfo();
         display.showTitleOnTop((int)DISPLAY_CLOCK);
         display.resetDisplay();
-        wifi.printLocalDay();
+        wifi.printLocalDay(timeinfo);
         isShowing = false;
       }
 
-      wifi.printLocalTime();
+      // wifi.printLocalTime();
+      // struct tm timeinfo = wifi.getLocalTimeInfo();
       break;
 
     case DISPLAY_WIFI:
@@ -115,6 +112,17 @@ void loop() {
     isShowing = true;
   }
 
+  if (display.getModeDisplay() == DISPLAY_CLOCK && !isShowing){
+    while(1){
+      wifi.nextSecondTime(&timeinfo);
+      wifi.printLocalTime(timeinfo);
+      M5.update();
+      if (M5.BtnC.isPressed()){
+        break;
+      }
+      delay(999); //1秒
+    }
+  }
 
   delay(100);
 }

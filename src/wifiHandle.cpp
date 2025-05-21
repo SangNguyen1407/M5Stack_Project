@@ -17,15 +17,59 @@ void WIFI_NETWORK::setupWifi(){
   macAddress = WiFi.macAddress();
 }
 
-void WIFI_NETWORK::printLocalDay(){
+bool WIFI_NETWORK::nextSecondTime(tm *time){
+  bool nextTime = false;
+
+  if (time->tm_sec == 59){
+    time->tm_sec = 0;
+    nextTime = true;
+  }
+  else{
+    time->tm_sec += 1;
+  }
+
+  if (nextTime == true){
+    nextTime = false;
+    if (time->tm_min == 59){
+      time->tm_min = 0;
+      nextTime = true;
+    }
+    time->tm_min += 1;
+  }
+  
+  if (nextTime == true){
+    nextTime = false;
+    if (time->tm_hour == 23){
+      if(!getLocalTime(time)){
+        M5.Lcd.println("Failed to obtain time");
+        return false;
+      }
+
+      printLocalDay(*time);
+    }
+    else{
+      time->tm_hour += 1;
+    }
+  }
+
+  return true;
+}
+
+tm WIFI_NETWORK::getLocalTimeInfo(){
   struct tm timeinfo;
   char day_char[100];
 
   if(!getLocalTime(&timeinfo)){
     M5.Lcd.println("Failed to obtain time");
-    return;
   }
 
+  return timeinfo;
+}
+
+void WIFI_NETWORK::printLocalDay(tm timeinfo){
+  char day_char[100];
+  memset(day_char, '/0', 100);
+  
   // 現在時刻を表示
   sprintf(day_char,"%04d-%02d-%02d" 
     ,timeinfo.tm_year + 1900
@@ -33,21 +77,14 @@ void WIFI_NETWORK::printLocalDay(){
     ,timeinfo.tm_mday
   );
 
-  
   M5.Lcd.fillRect(0, 60, 320, 60, TFT_BLACK);
   M5.Lcd.drawCentreString(getHostName(), 0, 60, 4);
   M5.Lcd.drawCentreString(day_char, 0, 100, 4); 
 }
 
-void WIFI_NETWORK::printLocalTime(){
-  struct tm timeinfo;
+void WIFI_NETWORK::printLocalTime(tm timeinfo){
   char time_char[100];
   memset(time_char, '/0', 100);
-
-  if(!getLocalTime(&timeinfo)){
-    M5.Lcd.println("Failed to obtain time");
-    return;
-  }
 
   // 現在時刻を表示
   sprintf(time_char,"%02d:%02d:%02d" 
@@ -56,8 +93,8 @@ void WIFI_NETWORK::printLocalTime(){
     ,timeinfo.tm_sec
     );
 
-  M5.Lcd.fillRect(0, 160, 320, 30, TFT_BLACK);
-  M5.Lcd.drawCentreString(time_char, 0, 160, 4);  
+  M5.Lcd.fillRect(0, 160, 320, 60, TFT_BLACK);
+  M5.Lcd.drawCentreString(time_char, 0, 160, 6);  
   
 }
 
