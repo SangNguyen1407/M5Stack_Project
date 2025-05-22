@@ -11,6 +11,7 @@
 
 using namespace std;
 
+#define MAX_DISPLAY_COUNT   7
 static DISPLAY_SHOW display;
 
 static bool isShowing;
@@ -22,6 +23,58 @@ WIFI_NETWORK wifi;
 
 int width;
 int height;
+
+static void func_bleDisplay();
+static void func_clockDisplay();
+static void func_wifiDisplay();
+static void func_menuDisplay();
+static void func_timeDisplay();
+static void func_countDisplay();
+static void func_alarmDisplay();
+
+static void func_menuDisplay(){
+  if(isShowing){
+    display.showTitleOnTop((int)DISPLAY_MENU);
+
+    display.addListMenu(LIST_MENU);
+    display.showListMenu(0);
+    isShowing = false;
+    item_pos = 0;
+
+    display.chooseItem(0);
+  }
+}
+
+static void func_clockDisplay(){
+    if(isShowing){ 
+    timeinfo = wifi.getLocalTimeInfo();
+    display.showTitleOnTop((int)DISPLAY_CLOCK);
+    display.resetDisplay();
+    wifi.printLocalDay(timeinfo);
+    isShowing = false;
+  }
+
+  // wifi.printLocalTime();
+  // struct tm timeinfo = wifi.getLocalTimeInfo();
+}
+
+static void func_timeDisplay(){}
+static void func_countDisplay(){}
+static void func_alarmDisplay(){}
+static void func_wifiDisplay(){}
+static void func_bleDisplay(){}
+
+typedef void (*func_t)();
+
+static const func_t funcTbl[MAX_DISPLAY_COUNT] = {
+  func_bleDisplay,
+  func_clockDisplay,
+  func_wifiDisplay,
+  func_menuDisplay,
+  func_timeDisplay,
+  func_countDisplay,
+  func_alarmDisplay,
+};
 
 void setup() {
   
@@ -42,52 +95,8 @@ void setup() {
 
 void loop() {
   M5.update();
-  
-  switch (display.getModeDisplay()){
-    case DISPLAY_BLUETOOTH:
-      if(isShowing){
-          display.showTitleOnTop((int)DISPLAY_BLUETOOTH);
-          display.showListMenu(0);
-          isShowing = false;
-          item_pos = 0;
 
-          display.chooseItem(0);
-      }
-      break;
-    
-    case DISPLAY_CLOCK:
-      if(isShowing){ 
-        timeinfo = wifi.getLocalTimeInfo();
-        display.showTitleOnTop((int)DISPLAY_CLOCK);
-        display.resetDisplay();
-        wifi.printLocalDay(timeinfo);
-        isShowing = false;
-      }
-
-      // wifi.printLocalTime();
-      // struct tm timeinfo = wifi.getLocalTimeInfo();
-      break;
-
-    case DISPLAY_WIFI:
-      if(isShowing){
-        display.showTitleOnTop((int)DISPLAY_WIFI);
-        isShowing = false;
-      }
-      break;
-    
-    case DISPLAY_MENU:
-      if(isShowing){
-        display.showTitleOnTop((int)DISPLAY_MENU);
-
-        display.addListMenu(LIST_MENU);
-        display.showListMenu(0);
-        isShowing = false;
-        item_pos = 0;
-
-        display.chooseItem(0);
-      }
-      break;
-  }
+  funcTbl[(int) display.getModeDisplay()]();
 
   if (M5.BtnA.wasReleased()){
     if (display.getModeDisplay() != DISPLAY_MENU){
@@ -120,7 +129,7 @@ void loop() {
       if (M5.BtnC.isPressed()){
         break;
       }
-      delay(999); //1秒
+      delay(1000); //1秒
     }
   }
 
