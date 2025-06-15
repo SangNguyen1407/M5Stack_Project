@@ -6,7 +6,7 @@
 // #include "networkHandle.h"
 // #include "fileHandle.h"
 
-#define DISPLAY_MAX_SIZE 6
+#define DISPLAY_MAX_SIZE 8
 #define FONT             4
 #define LINE_MAX_CHAR    10
 
@@ -19,16 +19,19 @@ const char *LIST_MENU[LIST_MENU_MAX] = {
     "BLUETOOTH",
     "CLOCK",
     "WIFI",
-    "GAME"
+    "MENU",
+    "TIME",
+    "COUNT",
+    "SLEEP TIME",
 };
 
-void DISPLAY_SHOW::addListMenu(const char *list_menu[]){
+void DISPLAY_SHOW::addListMenu(const char **list_menu, int list_size){
     if (list.size()> 0){
         list.clear();
     }
 
-    int list_size = sizeof(list_menu)/ sizeof(list_menu[0]);
-    for(int pos = 0; pos < LIST_MENU_MAX; pos++){
+    // int list_size = sizeof(list_menu)/ sizeof(list_menu[0]);
+    for(int pos = 0; pos < list_size; pos++){
         list.push_back(list_menu[pos]);
     }
 }

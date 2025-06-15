@@ -6,7 +6,7 @@
 extern int width;
 extern int height;
 
-#define LIST_MENU_MAX    4
+#define LIST_MENU_MAX    8
 
 typedef enum {
     DISPLAY_BLUETOOTH = 0,
@@ -15,7 +15,7 @@ typedef enum {
     DISPLAY_MENU,
     DISPLAY_TIME,
     DISPLAY_COUNT,
-    DISPLAY_ALARM,
+    DISPLAY_SLEEP_TIME,
 } DISPLAY_MODE;
 
 typedef enum {
@@ -84,7 +84,7 @@ class DISPLAY_SHOW{
 
         void setModeDisplay(DISPLAY_MODE mode);
         DISPLAY_MODE getModeDisplay();
-        void addListMenu(const char *list_menu[LIST_MENU_MAX]); 
+        void addListMenu(const char **list_menu, int list_size); 
 };
 
 

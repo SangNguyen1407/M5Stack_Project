@@ -11,7 +11,7 @@
 
 using namespace std;
 
-#define MAX_DISPLAY_COUNT   7
+#define MAX_DISPLAY_COUNT   8
 static DISPLAY_SHOW display;
 
 static bool isShowing;
@@ -31,12 +31,13 @@ static void func_menuDisplay();
 static void func_timeDisplay();
 static void func_countDisplay();
 static void func_alarmDisplay();
+static void func_sleepTimeDisplay();
 
 static void func_menuDisplay(){
   if(isShowing){
     display.showTitleOnTop((int)DISPLAY_MENU);
 
-    display.addListMenu(LIST_MENU);
+    display.addListMenu(LIST_MENU, LIST_MENU_MAX);
     display.showListMenu(0);
     isShowing = false;
     item_pos = 0;
@@ -47,15 +48,59 @@ static void func_menuDisplay(){
 
 static void func_clockDisplay(){
     if(isShowing){ 
-    timeinfo = wifi.getLocalTimeInfo();
-    display.showTitleOnTop((int)DISPLAY_CLOCK);
-    display.resetDisplay();
-    wifi.printLocalDay(timeinfo);
-    isShowing = false;
-  }
+      timeinfo = wifi.getLocalTimeInfo();
+      display.showTitleOnTop((int)DISPLAY_CLOCK);
+      display.resetDisplay();
+      wifi.printLocalDay(timeinfo);
+      isShowing = false;
+    }
 
   // wifi.printLocalTime();
   // struct tm timeinfo = wifi.getLocalTimeInfo();
+}
+
+static void func_sleepTimeDisplay(){
+  if(isShowing){ 
+    M5.Lcd.println("func_sleepTimeDisplay");
+    display.showTitleOnTop((int)DISPLAY_SLEEP_TIME);
+    display.resetDisplay();
+    isShowing = false;
+    const char *SLEEP_MENU[2] = {
+      "SLEEP",
+      "AWAKE"
+    };
+    M5.Lcd.println("func_sleepTimeDisplay 2");
+    display.addListMenu(SLEEP_MENU, 2);
+    M5.Lcd.println("func_sleepTimeDisplay 3");
+    display.showListMenu(0);
+    item_pos = 0;
+    display.chooseItem(0);
+  }
+
+    if (M5.BtnA.wasReleased()){
+      item_pos++;
+      if (item_pos > 2){
+        item_pos = 0;
+      }
+      display.chooseItem(item_pos);
+    }
+
+    if (M5.BtnB.wasReleased()){
+      String values;
+      if (item_pos == 0){
+        values = "{ \"ID\":\"1\", \"value\":\"1\" }";
+      }
+      else{
+        values = "{ \"ID\":\"1\", \"value\":\"2\" }";
+      }
+
+      wifi.postValues(values);
+
+      isShowing = true;
+      func_menuDisplay();
+
+      delay(1000);
+    }
 }
 
 static void func_timeDisplay(){}
@@ -73,7 +118,7 @@ static const func_t funcTbl[MAX_DISPLAY_COUNT] = {
   func_menuDisplay,
   func_timeDisplay,
   func_countDisplay,
-  func_alarmDisplay,
+  func_sleepTimeDisplay,
 };
 
 void setup() {
@@ -90,7 +135,7 @@ void setup() {
   isShowing = true;
   isHandle = false;
 
-  wifi.setupWifi();
+  wifi.connectWifi();
 }
 
 void loop() {

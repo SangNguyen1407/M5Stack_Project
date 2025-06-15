@@ -1,8 +1,8 @@
 #include<wifiHandle.h>
-
+#include <HTTPClient.h>
 #define JST 3600 * 9 
 
-void WIFI_NETWORK::setupWifi(){
+void WIFI_NETWORK::connectWifi(){
   
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
@@ -103,4 +103,42 @@ String WIFI_NETWORK::getHostName(){
 }
 String WIFI_NETWORK::getDNSAddress(){
   return dnsIP;
+}
+
+String WIFI_NETWORK::postValues(String values_to_post){
+  M5.Lcd.print("Connected to ");
+  M5.Lcd.println("\nStarting connection to server...");
+  connectWifi();
+  
+  client.setInsecure();
+  if (!client.connect(host, 443))
+    M5.Lcd.println("Connection failed!");
+  else {
+    M5.Lcd.println("Connected to server!");
+    // Make a HTTP request:
+    client.println("POST " + url + " HTTP/1.1");
+    client.println("HOST: " + (String)host);
+    client.println("Connection: close");
+    client.println("Content-Type: application/json");
+    client.print("Content-Length: ");
+    client.println(values_to_post.length());
+    client.println();
+    client.println(values_to_post);
+
+    while (client.connected()) {
+      String line = client.readStringUntil('\n');
+      if (line == "\r") {
+        M5.Lcd.println("headers received");
+        break;
+      }
+    }
+    // if there are incoming bytes available
+    // from the server, read them and print them:
+    while (client.available()) {
+      char c = client.read();
+      M5.Lcd.write(c);
+    }
+
+    client.stop();
+  }
 }
