@@ -1,8 +1,5 @@
 #include "networkHandle.h"
 
-const char* ssid       = "00CAE0892657-5G";
-const char* password   = "segmgx6nxz7c98";
-
 const char* ntpServer = "ntp.nict.jp";
 const long  gmtOffset_sec = 3600 * 9;
 const int   daylightOffset_sec = 0;

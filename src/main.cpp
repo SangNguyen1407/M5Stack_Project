@@ -61,46 +61,41 @@ static void func_clockDisplay(){
 
 static void func_sleepTimeDisplay(){
   if(isShowing){ 
-    M5.Lcd.println("func_sleepTimeDisplay");
-    display.showTitleOnTop((int)DISPLAY_SLEEP_TIME);
-    display.resetDisplay();
     isShowing = false;
-    const char *SLEEP_MENU[2] = {
-      "SLEEP",
-      "AWAKE"
-    };
-    M5.Lcd.println("func_sleepTimeDisplay 2");
-    display.addListMenu(SLEEP_MENU, 2);
-    M5.Lcd.println("func_sleepTimeDisplay 3");
-    display.showListMenu(0);
+
+    display.resetDisplay();
+    display.showTitleOnTop((int)DISPLAY_SLEEP_TIME);
+    display.addListMenu(SLEEP_MENU, LIST_MENU_SLEEP_MAX);
+
     item_pos = 0;
+    display.showListMenu(0);
     display.chooseItem(0);
   }
 
-    if (M5.BtnA.wasReleased()){
-      item_pos++;
-      if (item_pos > 2){
-        item_pos = 0;
-      }
-      display.chooseItem(item_pos);
+  if (M5.BtnA.wasReleased()){
+    item_pos++;
+    if (item_pos >= 2){
+      item_pos = 0;
+    }
+    display.chooseItem(item_pos);
+  }
+
+  if (M5.BtnB.wasReleased()){
+    String values;
+    if (item_pos == 0){
+      values = "{ \"ID\":\"1\", \"value\":\"1\" }";
+    }
+    else{
+      values = "{ \"ID\":\"1\", \"value\":\"2\" }";
     }
 
-    if (M5.BtnB.wasReleased()){
-      String values;
-      if (item_pos == 0){
-        values = "{ \"ID\":\"1\", \"value\":\"1\" }";
-      }
-      else{
-        values = "{ \"ID\":\"1\", \"value\":\"2\" }";
-      }
+    wifi.postValues(values);
 
-      wifi.postValues(values);
+    isShowing = true;
+    func_menuDisplay();
 
-      isShowing = true;
-      func_menuDisplay();
-
-      delay(1000);
-    }
+    delay(1000);
+  }
 }
 
 static void func_timeDisplay(){}

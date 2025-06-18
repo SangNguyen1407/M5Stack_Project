@@ -1,12 +1,8 @@
 #include <Arduino.h>
 #include <M5Core2.h>
-
-// #include "buttonEvent.h"
 #include "displayHandle.h"
-// #include "networkHandle.h"
-// #include "fileHandle.h"
 
-#define DISPLAY_MAX_SIZE 8
+#define DISPLAY_MAX_SIZE 7
 #define FONT             4
 #define LINE_MAX_CHAR    10
 
@@ -24,6 +20,12 @@ const char *LIST_MENU[LIST_MENU_MAX] = {
     "COUNT",
     "SLEEP TIME",
 };
+
+const char *SLEEP_MENU[LIST_MENU_SLEEP_MAX] = {
+    "SLEEP",
+    "AWAKE"
+};
+
 
 void DISPLAY_SHOW::addListMenu(const char **list_menu, int list_size){
     if (list.size()> 0){
@@ -88,22 +90,22 @@ void DISPLAY_SHOW::showListMenu(int start){
     }   
 }
 
-void DISPLAY_SHOW::nextItem(int start){
-    // 画面にデバイスの地位
-    int opt_pos = start % DISPLAY_MAX_SIZE;
+// void DISPLAY_SHOW::nextItem(int start){
+//     // 画面にデバイスの地位
+//     int opt_pos = start % DISPLAY_MAX_SIZE;
 
-    if (opt_pos == 0){
-        //　リストをリセットする
-        showListMenu(start);
-    }
-    else {
-        //　選択しない線
-        showLineOff(list.at(start-1), opt_pos);
-    }
-    //　選択線
-    showLineOn(list.at(start), opt_pos + 1);
+//     if (opt_pos == 0){
+//         //　リストをリセットする
+//         showListMenu(start);
+//     }
+//     else {
+//         //　選択しない線
+//         showLineOff(list.at(start-1), opt_pos);
+//     }
+//     //　選択線
+//     showLineOn(list.at(start), opt_pos + 1);
     
-}
+// }
 
 int DISPLAY_SHOW::getListMenuSize(){
     return LIST_MENU_MAX;
@@ -125,9 +127,10 @@ DISPLAY_MODE DISPLAY_SHOW::getModeDisplay(){
 void DISPLAY_SHOW::chooseItem( int start){
     // 画面にデバイスの地位
     int opt_pos = start % DISPLAY_MAX_SIZE;
+
     if (opt_pos == 0){
         //　リストをリセットする
-        showListMenu(start);   
+        showListMenu(start);
     }
     else {
         //　選択しない線

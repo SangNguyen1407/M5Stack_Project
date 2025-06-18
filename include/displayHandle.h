@@ -6,7 +6,8 @@
 extern int width;
 extern int height;
 
-#define LIST_MENU_MAX    8
+#define LIST_MENU_MAX    7
+#define LIST_MENU_SLEEP_MAX    2
 
 typedef enum {
     DISPLAY_BLUETOOTH = 0,
@@ -25,8 +26,7 @@ typedef enum {
 } LEVEL;
 
 extern const char *LIST_MENU[LIST_MENU_MAX];
-// extern const char *LIST_BLE[LIST_MENU_MAX];
-// extern const char *LIST_CLOCK[LIST_MENU_MAX];
+extern const char *SLEEP_MENU[LIST_MENU_SLEEP_MAX];
 
 class DISPLAY_SHOW{
     private: 
@@ -51,17 +51,11 @@ class DISPLAY_SHOW{
         };
         ~DISPLAY_SHOW() {};
 
-        // void ShowDisplay();
-        // void showTitle(DISPLAY_MODE mode);
         void showTitleOnTop(String title);
         void showTitleOnTop(int pos);
         void showTitleOnMiddle(String title);
 
         void printTime(tm time);
-
-
-        // void displayScanDevice(std::vector<String> device_list);
-        // void showAdvertisedDeviceList(std::vector<String> device_list, int opt);
         
         void showLineOff(String item, int pos);
         void showLineOn(String item, int pos);
@@ -74,9 +68,7 @@ class DISPLAY_SHOW{
         void updateStrengthLevel();
         void showStrengthLevel();
 
-        // void showListMenu(std::vector<String> list);
         void showListMenu(int start_pos);
-        void nextItem(int opt);
         void chooseItem(int opt);
 
         int getListMenuSize();
