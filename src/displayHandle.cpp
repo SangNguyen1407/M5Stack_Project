@@ -11,6 +11,7 @@ int padding_x = 10;
 int padding_y = 5;
 int circle    = 10;
 
+// List menu
 const char *LIST_MENU[LIST_MENU_MAX] = {
     "BLUETOOTH",
     "CLOCK",
@@ -21,63 +22,80 @@ const char *LIST_MENU[LIST_MENU_MAX] = {
     "SLEEP TIME",
 };
 
+// the child items of Sleep time items
 const char *SLEEP_MENU[LIST_MENU_SLEEP_MAX] = {
     "SLEEP",
     "AWAKE"
 };
 
-
+// create list items to show display
 void DISPLAY_SHOW::addListMenu(const char **list_menu, int list_size){
+    // list is existed, remove all
     if (list.size()> 0){
         list.clear();
     }
 
-    // int list_size = sizeof(list_menu)/ sizeof(list_menu[0]);
+    // add list items into list
     for(int pos = 0; pos < list_size; pos++){
         list.push_back(list_menu[pos]);
     }
 }
 
+// show title in the top of display
 void DISPLAY_SHOW::showTitleOnTop(String title){
+    // GREEN background
     M5.Lcd.fillRect(0, 0, width, title_h, TFT_DARKGREEN);
+    // title in the middle
     M5.Lcd.drawCentreString(title, width/2, padding_y, FONT);
 }
 
+// show title in the top of display with position of list
 void DISPLAY_SHOW::showTitleOnTop(int pos){
+    // get title name in list
     String title = list.at(pos);
+    // show title in the top of display
     showTitleOnTop(title);
 }
 
-void DISPLAY_SHOW::showTitleOnMiddle(String title){
-    int color = (title == "1")? TFT_GREEN : (title == "2")? TFT_YELLOW : TFT_RED;
+// // 
+// void DISPLAY_SHOW::showTitleOnMiddle(String title){
+//     int color = (title == "1")? TFT_GREEN : (title == "2")? TFT_YELLOW : TFT_RED;
 
-    M5.Lcd.fillRect(0, title_h + height, width, height, color);
-}
+//     M5.Lcd.fillRect(0, title_h + height, width, height, color);
+// }
 
-void printTime(tm time){
-  char time_char[100];
-  memset(time_char, '/0', 100);
+// void printTime(tm time){
+//   char time_char[100];
+//   memset(time_char, '/0', 100);
 
-  M5.Lcd.fillRect(0, 60, 320, 60, TFT_BLACK);
-  M5.Lcd.drawCentreString(time_char, 0, 100, 4);
-}
+//   M5.Lcd.fillRect(0, 60, 320, 60, TFT_BLACK);
+//   M5.Lcd.drawCentreString(time_char, 0, 100, 4);
+// }
 
+// press buttonA to choose items, this item is OFF
 void DISPLAY_SHOW::showLineOff(String item, int pos){
+    // change to Black background
     M5.Lcd.fillRoundRect(0, title_h*pos, width, title_h, circle, TFT_BLACK);
+    // white round
     M5.Lcd.drawRoundRect(0, title_h*pos, width, title_h, circle, TFT_WHITE);
+    // show item name
     M5.Lcd.drawCentreString(item, width/2, title_h*pos + padding_y, FONT);
 }
 
+// press buttonA to choose items, this item is ON
 void DISPLAY_SHOW::showLineOn(String item, int pos){
+    // change to GREEN background
     M5.Lcd.fillRoundRect(0, title_h*pos, width, title_h, circle, TFT_DARKCYAN);
+    // white round
     M5.Lcd.drawRoundRect(0, title_h*pos, width, title_h, circle, TFT_WHITE);
+    // show item name
     M5.Lcd.drawCentreString(item, width/2, title_h*pos + padding_y, FONT);
 }
 
 /**
  * show list in main display
  */
-void DISPLAY_SHOW::showListMenu(int start){
+void DISPLAY_SHOW::showListMenu(int start) {
 
     M5.Lcd.fillRect(0, title_h, width, height, TFT_BLACK);
     int list_max = (start + DISPLAY_MAX_SIZE > list.size())? 
@@ -90,27 +108,9 @@ void DISPLAY_SHOW::showListMenu(int start){
     }   
 }
 
-// void DISPLAY_SHOW::nextItem(int start){
-//     // 画面にデバイスの地位
-//     int opt_pos = start % DISPLAY_MAX_SIZE;
-
-//     if (opt_pos == 0){
-//         //　リストをリセットする
-//         showListMenu(start);
-//     }
-//     else {
-//         //　選択しない線
-//         showLineOff(list.at(start-1), opt_pos);
-//     }
-//     //　選択線
-//     showLineOn(list.at(start), opt_pos + 1);
-    
-// }
-
 int DISPLAY_SHOW::getListMenuSize(){
     return LIST_MENU_MAX;
 }
-
 
 String DISPLAY_SHOW::getItemName(int pos){
     return list.at(pos).c_str();

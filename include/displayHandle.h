@@ -53,9 +53,9 @@ class DISPLAY_SHOW{
 
         void showTitleOnTop(String title);
         void showTitleOnTop(int pos);
-        void showTitleOnMiddle(String title);
+        // void showTitleOnMiddle(String title);
 
-        void printTime(tm time);
+        // void printTime(tm time);
         
         void showLineOff(String item, int pos);
         void showLineOn(String item, int pos);

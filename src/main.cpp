@@ -60,6 +60,8 @@ static void func_clockDisplay(){
 }
 
 static void func_sleepTimeDisplay(){
+  bool isExisted = false;
+
   if(isShowing){ 
     isShowing = false;
 
@@ -72,6 +74,7 @@ static void func_sleepTimeDisplay(){
     display.chooseItem(0);
   }
 
+  // handle when press buttonA
   if (M5.BtnA.wasReleased()){
     item_pos++;
     if (item_pos >= 2){
@@ -80,21 +83,31 @@ static void func_sleepTimeDisplay(){
     display.chooseItem(item_pos);
   }
 
+  // handle when press buttonB
   if (M5.BtnB.wasReleased()){
-    String values;
+    // create JSON data
+    String values = "";
+    // send data (SLEEP - AWAKE)
+    // SLEEP value : 1
+    // AWAKE value : 2
     if (item_pos == 0){
       values = "{ \"ID\":\"1\", \"value\":\"1\" }";
     }
     else{
       values = "{ \"ID\":\"1\", \"value\":\"2\" }";
     }
-
+    // send data
     wifi.postValues(values);
 
+    //show LIST MENU
+    isExisted = true;
+  }
+
+    // handle when press buttonB
+  if (M5.BtnC.wasReleased() || isExisted){
+    //show LIST MENU
     isShowing = true;
     func_menuDisplay();
-
-    delay(1000);
   }
 }
 
@@ -130,7 +143,7 @@ void setup() {
   isShowing = true;
   isHandle = false;
 
-  wifi.connectWifi();
+  //wifi.connectWifi();
 }
 
 void loop() {

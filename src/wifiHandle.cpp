@@ -115,7 +115,6 @@ String WIFI_NETWORK::postValues(String values_to_post){
     M5.Lcd.println("Connection failed!");
   else {
     M5.Lcd.println("Connected to server!");
-    // Make a HTTP request:
     client.println("POST " + url + " HTTP/1.1");
     client.println("HOST: " + (String)host);
     client.println("Connection: close");
@@ -140,5 +139,7 @@ String WIFI_NETWORK::postValues(String values_to_post){
     }
 
     client.stop();
+
+    delay(1000);
   }
 }
