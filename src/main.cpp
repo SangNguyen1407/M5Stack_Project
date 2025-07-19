@@ -5,7 +5,7 @@
 #include <SPIFFS.h>
 
 #include "displayHandle.h"
-#include "networkHandle.h"
+#include "bleHandle.h"
 #include "fileHandle.h"
 #include "wifiHandle.h"
 
@@ -20,6 +20,7 @@ static int list_size;
 static int item_pos; 
 static struct tm timeinfo;
 WIFI_NETWORK wifi;
+BLEControl ble;
 
 int width;
 int height;
@@ -47,16 +48,27 @@ static void func_menuDisplay(){
 }
 
 static void func_clockDisplay(){
+    //最初、Wifi接続し、日時を取得するです。
     if(isShowing){ 
+      wifi.connectWifi();
       timeinfo = wifi.getLocalTimeInfo();
       display.showTitleOnTop((int)DISPLAY_CLOCK);
       display.resetDisplay();
       wifi.printLocalDay(timeinfo);
+
       isShowing = false;
     }
 
-  // wifi.printLocalTime();
-  // struct tm timeinfo = wifi.getLocalTimeInfo();
+    //1秒で、画面に更新する
+    while(true){
+      wifi.nextSecondTime(&timeinfo);
+      wifi.printLocalTime(timeinfo);
+      M5.update();
+      if (M5.BtnC.isPressed()){
+        break;
+      }
+      delay(1000); //1秒
+    }
 }
 
 static void func_sleepTimeDisplay(){
@@ -97,7 +109,7 @@ static void func_sleepTimeDisplay(){
       values = "{ \"ID\":\"1\", \"value\":\"2\" }";
     }
     // send data
-    wifi.postValues(values);
+    wifi.httpGETRequest(values);
 
     //show LIST MENU
     isExisted = true;
@@ -110,12 +122,22 @@ static void func_sleepTimeDisplay(){
     func_menuDisplay();
   }
 }
+static void func_bleDisplay(){
+  if(isShowing){ 
+    isShowing = false;
+
+    display.resetDisplay();
+    display.showTitleOnTop((int)DISPLAY_BLUETOOTH);
+  }
+  ble.BLEStart();
+  ble.BLEScanPeripheralList();
+}
+
 
 static void func_timeDisplay(){}
 static void func_countDisplay(){}
 static void func_alarmDisplay(){}
 static void func_wifiDisplay(){}
-static void func_bleDisplay(){}
 
 typedef void (*func_t)();
 
@@ -130,7 +152,6 @@ static const func_t funcTbl[MAX_DISPLAY_COUNT] = {
 };
 
 void setup() {
-  
   // LCD開始の表示
   M5.begin();
   M5.Lcd.setTextSize(1);
@@ -142,15 +163,14 @@ void setup() {
   display.setModeDisplay(DISPLAY_MENU);
   isShowing = true;
   isHandle = false;
-
-  //wifi.connectWifi();
 }
 
 void loop() {
   M5.update();
-
+  // メニューの処理
   funcTbl[(int) display.getModeDisplay()]();
 
+  //Aボタンを押下すると、次の機能を移動するのを処理する
   if (M5.BtnA.wasReleased()){
     if (display.getModeDisplay() != DISPLAY_MENU){
       return;
@@ -163,27 +183,18 @@ void loop() {
     display.chooseItem(item_pos);
   }
 
+  //Bボタンを押下すると、機能を実施する
   if (M5.BtnB.wasReleased()){
     display.setModeDisplay((DISPLAY_MODE)item_pos);
     isShowing = true;
   }
 
-  if (M5.BtnC.wasReleased()){
+  //Cボタンを押下すると、機能を止まて、メニュー画面に移動する
+  if (M5.BtnC.isPressed() && 
+    display.getModeDisplay() != DISPLAY_MENU){
     display.resetDisplay();
     display.setModeDisplay(DISPLAY_MENU);
     isShowing = true;
-  }
-
-  if (display.getModeDisplay() == DISPLAY_CLOCK && !isShowing){
-    while(1){
-      wifi.nextSecondTime(&timeinfo);
-      wifi.printLocalTime(timeinfo);
-      M5.update();
-      if (M5.BtnC.isPressed()){
-        break;
-      }
-      delay(1000); //1秒
-    }
   }
 
   delay(100);

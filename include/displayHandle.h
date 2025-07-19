@@ -31,6 +31,7 @@ extern const char *SLEEP_MENU[LIST_MENU_SLEEP_MAX];
 class DISPLAY_SHOW{
     private: 
         std::vector<String> list;
+        // display mode 
         DISPLAY_MODE mode;
 
     public:

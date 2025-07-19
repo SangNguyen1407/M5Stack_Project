@@ -1,8 +1,8 @@
-#include "networkHandle.h"
+#include "bleHandle.h"
 
-const char* ntpServer = "ntp.nict.jp";
-const long  gmtOffset_sec = 3600 * 9;
-const int   daylightOffset_sec = 0;
+// const char* ntpServer = "ntp.nict.jp";
+// const long  gmtOffset_sec = 3600 * 9;
+// const int   daylightOffset_sec = 0;
 
 // std::vector<BLEAdvertisedDevice> pBLEAdvertiesdDeviceList;
 // int device_count = 0;
@@ -50,7 +50,6 @@ void BLEControl::BLEStart(){
       );
 
   pCharacteristic->setCallbacks(new CharacteristicCallback());
-
   pCharacteristic->addDescriptor(new BLE2902());
   pService->start();
 }

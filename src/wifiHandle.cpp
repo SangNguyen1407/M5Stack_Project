@@ -1,7 +1,9 @@
 #include<wifiHandle.h>
 #include <HTTPClient.h>
 #define JST 3600 * 9 
-
+/*
+https://www.geosense.co.jp/blog_m5upload/
+*/
 void WIFI_NETWORK::connectWifi(){
   
   WiFi.begin(ssid, password);
@@ -105,13 +107,13 @@ String WIFI_NETWORK::getDNSAddress(){
   return dnsIP;
 }
 
-String WIFI_NETWORK::postValues(String values_to_post){
+String WIFI_NETWORK::httpPOSTRequest(String values_to_post){
   M5.Lcd.print("Connected to ");
   M5.Lcd.println("\nStarting connection to server...");
   connectWifi();
-  
+
   client.setInsecure();
-  if (!client.connect(host, 443))
+  if (!client.connect(host, httpsPort))
     M5.Lcd.println("Connection failed!");
   else {
     M5.Lcd.println("Connected to server!");
@@ -131,15 +133,39 @@ String WIFI_NETWORK::postValues(String values_to_post){
         break;
       }
     }
-    // if there are incoming bytes available
-    // from the server, read them and print them:
+    
     while (client.available()) {
       char c = client.read();
       M5.Lcd.write(c);
     }
 
     client.stop();
-
     delay(1000);
   }
+}
+
+String WIFI_NETWORK::httpGETRequest(String values_to_post){
+  M5.Lcd.print("Connected to ");
+  M5.Lcd.println("\nStarting connection to server...");
+  connectWifi();
+  
+  http.begin(url);
+  int httpCode = http.POST(values_to_post);
+  String RESULT = "<b>Result:";
+  if(httpCode > 0){
+      M5.Lcd.printf(" HTTP Response:%d\n", httpCode);
+      if(httpCode == HTTP_CODE_OK){
+        M5.Lcd.println(" HTTP Success!!");
+        String payload = http.getString();
+        int valueStart = payload.indexOf('<b>Result:');
+        int valueEnd = payload.indexOf('</b>');
+        String valueStr = payload.substring(valueStart, valueEnd);
+        M5.Lcd.println(payload);
+      }
+  }else{
+    M5.Lcd.println(" FAILED");
+    Serial.printf(" HTTP failed,error: %s\n", http.errorToString(httpCode).c_str());
+  }
+   
+    http.end();
 }
